@@ -31,10 +31,10 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 window.addEventListener('scroll', () => {
     const navbar = document.querySelector('.navbar');
     if (window.scrollY > 100) {
-        navbar.style.background = 'rgba(255, 255, 255, 0.98)';
-        navbar.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.1)';
+        navbar.style.background = 'rgba(15, 23, 42, 0.98)';
+        navbar.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.3)';
     } else {
-        navbar.style.background = 'rgba(255, 255, 255, 0.95)';
+        navbar.style.background = 'rgba(15, 23, 42, 0.95)';
         navbar.style.boxShadow = 'none';
     }
 });
@@ -54,22 +54,78 @@ if (contactForm) {
         
         // Simple validation
         if (!name || !email || !subject || !message) {
-            alert('Please fill in all fields');
+            showNotification('Please fill in all fields', 'error');
             return;
         }
         
         // Email validation
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(email)) {
-            alert('Please enter a valid email address');
+            showNotification('Please enter a valid email address', 'error');
             return;
         }
         
-        // Here you would typically send the data to your server
-        // For now, we'll just show a success message
-        alert('Thank you for your message! We will get back to you soon.');
-        this.reset();
+        // Show loading state
+        const submitBtn = this.querySelector('button[type="submit"]');
+        const originalText = submitBtn.textContent;
+        submitBtn.textContent = 'Sending...';
+        submitBtn.disabled = true;
+        
+        // Simulate form submission (replace with actual Formspree submission)
+        setTimeout(() => {
+            showNotification('Thank you for your message! We will get back to you soon.', 'success');
+            this.reset();
+            submitBtn.textContent = originalText;
+            submitBtn.disabled = false;
+        }, 2000);
     });
+}
+
+// Notification system
+function showNotification(message, type = 'info') {
+    const notification = document.createElement('div');
+    notification.className = `notification notification-${type}`;
+    notification.textContent = message;
+    
+    // Style the notification
+    notification.style.cssText = `
+        position: fixed;
+        top: 100px;
+        right: 20px;
+        padding: 15px 20px;
+        border-radius: 8px;
+        color: white;
+        font-weight: 500;
+        z-index: 10000;
+        transform: translateX(400px);
+        transition: transform 0.3s ease;
+        max-width: 300px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    `;
+    
+    // Set colors based on type
+    if (type === 'success') {
+        notification.style.background = '#06b6d4';
+    } else if (type === 'error') {
+        notification.style.background = '#ef4444';
+    } else {
+        notification.style.background = '#64748b';
+    }
+    
+    document.body.appendChild(notification);
+    
+    // Animate in
+    setTimeout(() => {
+        notification.style.transform = 'translateX(0)';
+    }, 100);
+    
+    // Remove after 5 seconds
+    setTimeout(() => {
+        notification.style.transform = 'translateX(400px)';
+        setTimeout(() => {
+            document.body.removeChild(notification);
+        }, 300);
+    }, 5000);
 }
 
 // Animate elements on scroll
@@ -194,7 +250,7 @@ function createScrollProgress() {
         left: 0;
         width: 0%;
         height: 3px;
-        background: linear-gradient(45deg, #2563eb, #3b82f6);
+        background: linear-gradient(45deg, #06b6d4, #0891b2);
         z-index: 1001;
         transition: width 0.1s ease;
     `;
@@ -219,7 +275,7 @@ function createBackToTop() {
         right: 30px;
         width: 50px;
         height: 50px;
-        background: linear-gradient(45deg, #2563eb, #3b82f6);
+        background: linear-gradient(45deg, #06b6d4, #0891b2);
         color: white;
         border: none;
         border-radius: 50%;
@@ -229,7 +285,7 @@ function createBackToTop() {
         visibility: hidden;
         transition: all 0.3s ease;
         z-index: 1000;
-        box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4);
+        box-shadow: 0 4px 15px rgba(6, 182, 212, 0.4);
     `;
     
     document.body.appendChild(backToTop);
@@ -256,14 +312,47 @@ function createBackToTop() {
     // Hover effects
     backToTop.addEventListener('mouseenter', () => {
         backToTop.style.transform = 'translateY(-3px)';
-        backToTop.style.boxShadow = '0 6px 20px rgba(37, 99, 235, 0.6)';
+        backToTop.style.boxShadow = '0 6px 20px rgba(6, 182, 212, 0.6)';
     });
     
     backToTop.addEventListener('mouseleave', () => {
         backToTop.style.transform = 'translateY(0)';
-        backToTop.style.boxShadow = '0 4px 15px rgba(37, 99, 235, 0.4)';
+        backToTop.style.boxShadow = '0 4px 15px rgba(6, 182, 212, 0.4)';
     });
 }
 
 // Initialize back to top button
 createBackToTop();
+
+// Logo Interaction
+document.addEventListener('DOMContentLoaded', () => {
+    const logoContainer = document.querySelector('.logo-3d-container');
+    const logoCube = document.querySelector('.logo-cube');
+    
+    if (logoContainer && logoCube) {
+        // Add click effect
+        logoContainer.addEventListener('click', function() {
+            // Add click animation
+            this.style.transform = 'scale(0.95)';
+            logoCube.style.animationDuration = '0.5s';
+            
+            setTimeout(() => {
+                this.style.transform = 'scale(1.1)';
+                logoCube.style.animationDuration = '15s';
+            }, 150);
+            
+            setTimeout(() => {
+                this.style.transform = '';
+            }, 300);
+        });
+        
+        // Add hover pause effect
+        logoContainer.addEventListener('mouseenter', function() {
+            logoCube.style.animationPlayState = 'paused';
+        });
+        
+        logoContainer.addEventListener('mouseleave', function() {
+            logoCube.style.animationPlayState = 'running';
+        });
+    }
+});
